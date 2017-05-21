@@ -1,0 +1,40 @@
+algoritmo "Raiz"
+// Função : Calcula a Raiz
+// Autor : Ricardo A. Santiago
+// Data : 08/05/2017
+// **********************
+var
+R, N, x, RA, i: inteiro
+
+
+inicio
+
+escreval ("Escolha qual raiz deseja calcular, quadrado cúbica..")
+leia (R)
+escreval ("Escolha qual número você calcular a raiz", R)
+leia (N)
+
+RA <- 1
+
+
+para i de 1 ate N faca
+  para x de 1 ate R faca
+      RA <- RA*i
+  fimpara
+   
+  se RA = N entao
+    escreval ("A raiz",R," de ",N," é :",i)
+    interrompa
+  senao
+     RA <-1
+  fimse
+
+fimpara
+
+se RA <> N  entao
+    escreval ("O número", N," nao possui raiz exata")
+    interrompa
+    
+ fimse
+
+fimalgoritmo
