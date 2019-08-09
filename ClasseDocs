@@ -1,0 +1,112 @@
+package com.neomind.fusion.custom.DisparaAcao;
+
+import java.util.Map;
+
+import com.neomind.fusion.common.NeoObject;
+import com.neomind.fusion.eform.EForm;
+import com.neomind.fusion.entity.EntityAdapter;
+import com.neomind.fusion.entity.EntityWrapper;
+import com.neomind.fusion.persist.PersistEngine;
+
+public class Versiona implements EntityAdapter {
+	public void run(Map<String, Object> requestMap) {
+		
+		
+//pego o e-form do requestMap
+		EForm form = (EForm) requestMap.get(EntityAdapter.EFORM);
+
+//pego o objeto do eform
+		NeoObject noEform = (NeoObject) form.getObject();
+
+//instanciar os camps do e-form (wrapper)
+		EntityWrapper wEform = new EntityWrapper(noEform);
+
+//associa os campos do formulários a variaveis para ser tratadas		
+		long tV = wEform.findGenericValue("versioamento");
+		String Campo = wEform.findGenericValue("campo");
+		Campo = versoes(Campo, tV);
+		
+		wEform.findField("campo").setValue(Campo);
+		PersistEngine.persist(noEform);
+	}
+		
+public String versoes(String Campo, long tipo_versionamento) {
+			 
+			// definindo as veariaveis  
+			int Versao=0;
+			int Release=0;
+			int Manut=0;
+			
+			// chamada do metodo padronizador 
+			Campo = Padronizador(Campo);
+			
+			
+
+			// confere se o campo nao e nulo e defini o valor padra para ele 
+			if (Campo != null && Campo.isEmpty()) {
+				Campo = "00.00.00";
+			}
+			Versao = Integer.parseInt(Campo.substring(0, 2));
+			Release = Integer.parseInt(Campo.substring(0, 2));
+			Manut = Integer.parseInt(Campo.substring(0, 2));
+			
+			
+			// 
+			if (tipo_versionamento == 1) {
+			Versao = (Versao + 1);
+			Release = 0;
+			Manut = 0;
+			}
+
+			//
+			if (tipo_versionamento == 2) {
+			Release = (Release + 1);
+			Manut = 0;
+			}
+
+			// 
+			if (tipo_versionamento == 3) {
+			Manut = (Manut + 1);
+			}
+
+			return (String.format("%02d", Versao) + ("." 
+			+ (String.format("%02d", Release) + ("." + String.format("%02d",Manut)))));
+		}
+		
+		public String Padronizador(String Campo) {
+			String cDecode;
+			String cPrepare;
+			String cPart;
+			cDecode = Campo;
+			cPrepare = "";
+			
+			while (((((cDecode.indexOf(".", 0) + 1) > 0) && (cDecode.indexOf(".", 0) + 1) != -1) || (cDecode.length() > 0))) {
+				// 
+				if (((cDecode.indexOf(".", 0) + 1)== 0)) {
+					cPrepare = (cPrepare + String.format("%2s", cDecode));
+					cDecode = "";
+				}else {
+					cPart = String.format("%2s", cDecode.substring(0, (cDecode.indexOf(".", 0) + 1)));
+					cPrepare = (cPrepare + (cPart + "."));
+					cDecode = cDecode.substring((cDecode.indexOf(".", 0) + 1), cDecode.length());
+				}
+			}
+
+			return Campo=cPrepare;
+		}
+		
+		
+		
+		
+		
+		/*
+		 * if (Campo != null && Campo.isEmpty()) { Campo = "00.00.00"; } long versao[] =
+		 * new long[3]; if (tV == 1) { tV = 0;
+		 * 
+		 * } else if (tV == 2) { tV = 1; } else if (tV == 3) { tV = 2; } versao[(int)
+		 * tV] += 1; String cp = String.valueOf(versao[0] + "." + versao[1] + "." +
+		 * versao[2]); Campo = cp;
+		 */
+	
+	
+}
